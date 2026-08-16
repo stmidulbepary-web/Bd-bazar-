@@ -1,254 +1,27 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="BD Bazar">
-<title>BD Bazar — Online Store</title>
+<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BD Bazar — Gadget Shop</title>
 <style>
-:root{--primary:#111827;--accent:#2563eb;--bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--danger:#dc2626;--border:#e5e7eb}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--bg);color:var(--text)}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer;border:0}
-header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
-.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
-.logo{font-size:24px;font-weight:800;color:var(--primary);margin-right:auto}
-.logo span{color:var(--accent)}
-.search{width:min(420px,42vw);padding:11px 14px;border:1px solid var(--border);border-radius:12px;outline:0}
-.cart-btn{background:var(--primary);color:#fff;padding:11px 15px;border-radius:12px;font-weight:700}
-.hero{max-width:1200px;margin:24px auto;padding:42px 24px;border-radius:24px;background:linear-gradient(135deg,#111827,#2563eb);color:#fff}
-.hero h1{font-size:clamp(30px,5vw,54px);margin-bottom:10px}
-.hero p{max-width:650px;line-height:1.7;color:#e5e7eb}
-.container{max-width:1200px;margin:0 auto;padding:0 18px 40px}
-.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0}
-select{padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px #00000008}
-.card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#eee}
-.card-body{padding:14px}
-.card h3{font-size:17px;margin-bottom:8px}
-.price{font-size:19px;font-weight:800;margin:8px 0 12px}
-.muted{color:var(--muted);font-size:14px}
-.add{width:100%;background:var(--accent);color:#fff;padding:11px;border-radius:10px;font-weight:700}
-.empty{text-align:center;padding:60px 10px;color:var(--muted)}
-.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:50}
-.overlay.show{display:block}
-.drawer{position:absolute;right:0;top:0;height:100%;width:min(480px,100%);background:#fff;padding:20px;overflow:auto}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
-.close{background:#f3f4f6;border-radius:50%;width:38px;height:38px}
-.cart-item{display:grid;grid-template-columns:64px 1fr auto;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);align-items:center}
-.cart-item img{width:64px;height:64px;object-fit:cover;border-radius:10px}
-.qty{display:flex;align-items:center;gap:8px;margin-top:7px}
-.qty button{width:28px;height:28px;border-radius:7px;background:#eef2ff}
-.remove{color:var(--danger);font-size:13px;background:none;margin-top:5px}
-.total{font-size:22px;font-weight:800;padding:18px 0}
-.checkout{width:100%;background:#16a34a;color:#fff;padding:13px;border-radius:11px;font-weight:800}
-.form{display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:18px}
-.form.show{display:block}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
-.field input,.field textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;outline:0}
-.field textarea{min-height:80px;resize:vertical}
-.order{width:100%;background:var(--primary);color:#fff;padding:13px;border-radius:11px;font-weight:800}
-footer{text-align:center;padding:28px;color:var(--muted);background:#fff;border-top:1px solid var(--border)}
-@media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:650px){.nav{flex-wrap:wrap}.search{order:3;width:100%}.grid{grid-template-columns:repeat(2,1fr);gap:12px}.hero{margin:12px 12px 20px;padding:30px 20px}.container{padding:0 12px 30px}.card h3{font-size:15px}.price{font-size:17px}}
-</style>
-</head>
-<body>
-<header>
-  <div class="nav">
-    <div class="logo">BD <span>Bazar</span></div>
-    <input id="search" class="search" placeholder="পণ্য খুঁজুন..." aria-label="পণ্য খুঁজুন">
-    <button class="cart-btn" onclick="openCart()">🛒 কার্ট (<span id="cartCount">0</span>)</button>
-  </div>
-</header>
-
-<section class="hero">
-  <h1>BD Bazar-এ স্বাগতম</h1>
-  <p>জনপ্রিয় gadget পণ্য বেছে নিন, কার্টে যোগ করুন এবং সহজে Cash on Delivery-তে অর্ডার করুন।</p>
-</section>
-
-<main class="container">
-  <div class="toolbar">
-    <strong id="resultText">সব পণ্য</strong>
-    <select id="sort" onchange="render()">
-      <option value="default">সাজানো: ডিফল্ট</option>
-      <option value="low">দাম: কম থেকে বেশি</option>
-      <option value="high">দাম: বেশি থেকে কম</option>
-    </select>
-  </div>
-  <div id="products" class="grid"></div>
-</main>
-
-<footer>© 2026 MyShop — BD Bazar</footer>
-
-<div id="overlay" class="overlay" onclick="outsideClose(event)">
-  <aside class="drawer">
-    <div class="drawer-head">
-      <h2>আপনার কার্ট</h2>
-      <button class="close" onclick="closeCart()">✕</button>
-    </div>
-    <div id="cartItems"></div>
-    <div class="total">মোট: ৳<span id="total">0</span></div>
-    <button class="checkout" onclick="showForm()">অর্ডার করতে এগিয়ে যান</button>
-
-    <div id="form" class="form">
-      <h3 style="margin-bottom:12px">ডেলিভারি তথ্য</h3>
-      <div class="field"><label>নাম *</label><input id="name" required></div>
-      <div class="field"><label>মোবাইল নম্বর *</label><input id="phone" type="tel" placeholder="01XXXXXXXXX"></div>
-      <div class="field"><label>সম্পূর্ণ ঠিকানা *</label><textarea id="address"></textarea></div>
-      <div class="field"><label>নোট (ঐচ্ছিক)</label><textarea id="note"></textarea></div>
-      <button class="order" onclick="placeOrder()">অর্ডার কনফার্ম করুন</button>
-      <p class="muted" style="margin-top:10px">পেমেন্ট: Cash on Delivery</p>
-    </div>
-  </aside>
-</div>
-
+:root{--b:#1769ff;--d:#101828;--m:#667085;--bg:#f5f7fb}*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--bg);color:var(--d)}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #e5e7eb;padding:13px 18px;display:flex;gap:14px;align-items:center}.logo{font-size:25px;font-weight:900;white-space:nowrap}.logo b{color:var(--b)}.search{flex:1}.search input{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:13px}.btn{padding:12px 15px;border-radius:12px;font-weight:800}.blue{background:var(--b);color:#fff}.dark{background:var(--d);color:#fff}.wrap{max-width:1150px;margin:auto;padding:20px}.hero{padding:38px 28px;border-radius:26px;color:#fff;background:linear-gradient(120deg,#12213f,#1769ff);margin-bottom:25px}.hero h1{font-size:clamp(30px,5vw,52px);margin:0 0 10px}.hero p{font-size:18px;line-height:1.7}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:19px;overflow:hidden}.pic{width:100%;aspect-ratio:1.15;object-fit:cover;background:#eef4ff}.body{padding:15px}.tag{color:#175cd3;background:#eaf2ff;padding:5px 9px;border-radius:99px;font-size:12px;font-weight:bold}.card h3{margin:10px 0 5px}.desc{color:var(--m);line-height:1.5;min-height:42px}.price{font-size:22px;font-weight:900;margin:12px 0}.actions{display:flex;gap:8px}.actions button{flex:1}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:18px;overflow:auto}.modal.on{display:flex;align-items:center;justify-content:center}.box{background:#fff;border-radius:20px;padding:20px;width:min(720px,100%);position:relative}.close{position:absolute;right:12px;top:10px;border-radius:50%;padding:8px 12px}.detail{display:grid;grid-template-columns:1fr 1fr;gap:20px}.detail img{width:100%;border-radius:15px}.field{margin:10px 0}.field label{display:block;font-weight:bold;margin-bottom:5px}.field input,.field textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:11px}.field textarea{min-height:85px}.sum{background:#f8fafc;padding:12px;border-radius:12px;margin:12px 0}.row{display:flex;justify-content:space-between;padding:6px 0}.total{border-top:1px solid #ddd;font-weight:900;font-size:19px}.notice{background:#ecfdf3;color:#067647;padding:11px;border-radius:11px;line-height:1.5}.foot{background:#0b1220;color:#ddd;padding:30px 20px;margin-top:30px}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.detail{grid-template-columns:1fr}}@media(max-width:550px){.grid{grid-template-columns:1fr}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}}
+</style></head><body>
+<nav class="nav"><a class="logo">🛍️ BD <b>Bazar</b></a><div class="search"><input id="q" oninput="render()" placeholder="পণ্য খুঁজুন..."></div><a class="btn" href="tel:01954959814">📞 Call</a><button class="btn dark" onclick="cartOpen()">🛒 Cart (<span id="cc">0</span>)</button></nav>
+<main class="wrap"><section class="hero"><h1>BD Bazar — Gadget Store</h1><p>পছন্দের gadget বেছে নিন, Cart-এ যোগ করুন এবং <b>Cash on Delivery</b>-তে অর্ডার করুন। WhatsApp-এ অর্ডার পাঠানো যাবে।</p></section><h2>সব Gadget</h2><div id="grid" class="grid"></div></main>
+<footer class="foot"><b>BD Bazar</b><p>📞 01954959814</p><p>💵 Cash on Delivery • 💬 WhatsApp Order</p></footer>
+<div id="modal" class="modal" onclick="if(event.target===this)closeM()"><div id="box" class="box"></div></div>
 <script>
-/* =========================
-   আপনার পণ্য এখানে পরিবর্তন করুন
-   image URL-এ নিজের ছবির লিংক বসান
-   ========================= */
-const products = [
-  {id:1,name:"Wireless Mini Gadget",price:650,category:"Gadget",image:"https://images.unsplash.com/photo-1594787318286-3d835c1d207f?auto=format&fit=crop&w=800&q=80"},
-  {id:2,name:"Smart LED Gadget",price:850,category:"Gadget",image:"https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80"},
-  {id:3,name:"Portable Tech Gadget",price:950,category:"Gadget",image:"https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=800&q=80"},
-  {id:4,name:"USB Rechargeable Gadget",price:550,category:"Gadget",image:"https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=80"}
-];
-
-let cart = JSON.parse(localStorage.getItem("myshop_cart") || "[]");
-
-function money(n){return Number(n).toLocaleString("en-BD");}
-
-function render(){
-  const q=document.getElementById("search").value.trim().toLowerCase();
-  let list=products.filter(p=>p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q));
-  const sort=document.getElementById("sort").value;
-  if(sort==="low") list.sort((a,b)=>a.price-b.price);
-  if(sort==="high") list.sort((a,b)=>b.price-a.price);
-  document.getElementById("resultText").textContent=q?`${list.length}টি পণ্য পাওয়া গেছে`:"সব পণ্য";
-  document.getElementById("products").innerHTML=list.length?list.map(p=>`
-    <article class="card">
-      <img src="${p.image}" alt="${p.name}" loading="lazy">
-      <div class="card-body">
-        <h3>${p.name}</h3>
-        <div class="muted">${p.category}</div>
-        <div class="price">৳${money(p.price)}</div>
-        <button class="add" onclick="addToCart(${p.id})">🛒 কার্টে যোগ করুন</button>
-      </div>
-    </article>`).join(""):`<div class="empty" style="grid-column:1/-1">কোনো পণ্য পাওয়া যায়নি।</div>`;
-}
-
-function addToCart(id){
-  const item=cart.find(x=>x.id===id);
-  if(item)item.qty++;
-  else cart.push({id,qty:1});
-  save(); openCart();
-}
-
-function changeQty(id,delta){
-  const item=cart.find(x=>x.id===id);
-  if(!item)return;
-  item.qty+=delta;
-  if(item.qty<=0)cart=cart.filter(x=>x.id!==id);
-  save(); renderCart();
-}
-
-function removeItem(id){
-  cart=cart.filter(x=>x.id!==id);
-  save(); renderCart();
-}
-
-function save(){localStorage.setItem("myshop_cart",JSON.stringify(cart));updateCount();}
-
-function updateCount(){
-  document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
-}
-
-function renderCart(){
-  const box=document.getElementById("cartItems");
-  if(!cart.length){
-    box.innerHTML='<div class="empty">আপনার কার্ট খালি।</div>';
-    document.getElementById("total").textContent="0";
-    return;
-  }
-  let total=0;
-  box.innerHTML=cart.map(x=>{
-    const p=products.find(a=>a.id===x.id);
-    const subtotal=p.price*x.qty; total+=subtotal;
-    return `<div class="cart-item">
-      <img src="${p.image}" alt="">
-      <div><strong>${p.name}</strong><div class="muted">৳${money(p.price)} × ${x.qty}</div>
-      <div class="qty">
-        <button onclick="changeQty(${p.id},-1)">−</button><span>${x.qty}</span><button onclick="changeQty(${p.id},1)">+</button>
-      </div>
-      <button class="remove" onclick="removeItem(${p.id})">পণ্যটি সরান</button></div>
-      <strong>৳${money(subtotal)}</strong>
-    </div>`;
-  }).join("");
-  document.getElementById("total").textContent=money(total);
-}
-
-function openCart(){
-  document.getElementById("overlay").classList.add("show");
-  document.getElementById("form").classList.remove("show");
-  renderCart();
-}
-function closeCart(){document.getElementById("overlay").classList.remove("show")}
-function outsideClose(e){if(e.target.id==="overlay")closeCart()}
-function showForm(){
-  if(!cart.length){alert("আগে একটি পণ্য কার্টে যোগ করুন।");return;}
-  document.getElementById("form").classList.add("show");
-}
-
-function placeOrder(){
-  const name=document.getElementById("name").value.trim();
-  const phone=document.getElementById("phone").value.trim();
-  const address=document.getElementById("address").value.trim();
-  if(!name||!phone||!address){alert("নাম, মোবাইল নম্বর ও ঠিকানা পূরণ করুন।");return;}
-  if(!/^01\\d{9}$/.test(phone)){alert("সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন।");return;}
-
-  const lines=cart.map(x=>{
-    const p=products.find(a=>a.id===x.id);
-    return `${p.name} × ${x.qty} = ৳${p.price*x.qty}`;
-  }).join("\\n");
-  const total=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
-
-  /*
-    আপনার WhatsApp নম্বর এখানে বসান।
-    বাংলাদেশি নম্বরের আগে 88 দিন।
-    উদাহরণ: 8801XXXXXXXXX
-  */
-  const shopWhatsApp="8801954959814";
-
-  const message=
-`নতুন অর্ডার — MyShop
-
-নাম: ${name}
-মোবাইল: ${phone}
-ঠিকানা: ${address}
-নোট: ${document.getElementById("note").value.trim() || "নেই"}
-
-পণ্য:
-${lines}
-
-মোট: ৳${money(total)}
-পেমেন্ট: Cash on Delivery`;
-
-  if(shopWhatsApp==="8801954959814"){
-    alert("অর্ডার তৈরি হয়েছে।\\n\\nWhatsApp অর্ডার চালু করতে কোডের shopWhatsApp-এ আপনার WhatsApp নম্বর বসান।");
-    return;
-  }
-
-  window.open("https://wa.me/"+shopWhatsApp+"?text="+encodeURIComponent(message),"_blank");
-  cart=[]; save(); closeCart();
-  alert("অর্ডার পাঠানোর জন্য WhatsApp খোলা হয়েছে।");
-}
-
-document.getElementById("search").addEventListener("input",render);
-render(); updateCount();
-</script>
-</body>
-</html>
+const WA="8801954959814",PHONE="01954959814";
+const products=[
+{id:1,name:"Wireless Mini Gadget",price:650,cat:"Gadgets",img:"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=900&q=80",desc:"ছোট ও ব্যবহারযোগ্য everyday gadget।"},
+{id:2,name:"Smart LED Gadget",price:850,cat:"Gadgets",img:"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80",desc:"Modern LED design ও আকর্ষণীয় look।"},
+{id:3,name:"Bluetooth Speaker",price:1250,cat:"Audio",img:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",desc:"Portable speaker—বাসা ও ভ্রমণের জন্য।"},
+{id:4,name:"Smart Watch",price:1650,cat:"Wearable",img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",desc:"স্টাইলিশ daily-use smart watch।"},
+{id:5,name:"USB Rechargeable Fan",price:790,cat:"Home Gadget",img:"https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=900&q=80",desc:"Desk বা personal cooling-এর জন্য।"},
+{id:6,name:"Fast Charging Cable",price:390,cat:"Accessories",img:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",desc:"দৈনন্দিন charging-এর জন্য practical cable।"}];
+let cart=JSON.parse(localStorage.getItem("cart")||"[]");
+const money=n=>"৳"+n.toLocaleString("bn-BD");
+function save(){localStorage.setItem("cart",JSON.stringify(cart));document.getElementById("cc").textContent=cart.reduce((a,x)=>a+x.qty,0)}
+function render(){let q=document.getElementById("q").value.toLowerCase();document.getElementById("grid").innerHTML=products.filter(p=>(p.name+p.cat+p.desc).toLowerCase().includes(q)).map(p=>`<article class="card"><img class="pic" src="${p.img}"><div class="body"><span class="tag">${p.cat}</span><h3>${p.name}</h3><p class="desc">${p.desc}</p><div class="price">${money(p.price)}</div><div class="actions"><button class="btn" onclick="details(${p.id})">Details</button><button class="btn blue" onclick="add(${p.id})">🛒 Add</button></div></div></article>`).join("")}
+function add(id){let x=cart.find(a=>a.id===id);x?x.qty++:cart.push({id,qty:1});save()}
+function details(id){let p=products.find(x=>x.id===id);show(`<button class="close" onclick="closeM()">✕</button><div class="detail"><img src="${p.img}"><div><span class="tag">${p.cat}</span><h2>${p.name}</h2><div class="price">${money(p.price)}</div><p class="desc">${p.desc}</p><div class="notice">🚚 Cash on Delivery<br>📞 ${PHONE}</div><button class="btn blue" style="width:100%;margin-top:12px" onclick="add(${p.id});closeM()">🛒 Add to Cart</button></div></div>`)}
+function cartOpen(){let rows=cart.map(x=>{let p=products.find(a=>a.id===x.id);return `<div class="row"><span>${p.name} × ${x.qty}</span><b>${money(p.price*x.qty)}</b></div>`});let total=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);show(`<button class="close" onclick="closeM()">✕</button><h2>🛒 Cart & Checkout</h2><div class="sum">${rows.length?rows.join(""):"Cart খালি"}${rows.length?`<div class="row total"><span>মোট</span><span>${money(total)}</span></div>`:""}</div>${rows.length?`<div class="notice">💵 Payment: Cash on Delivery</div><div class="field"><label>নাম *</label><input id="name" placeholder="আপনার নাম"></div><div class="field"><label>ফোন *</label><input id="phone" placeholder="01XXXXXXXXX"></div><div class="field"><label>সম্পূর্ণ ঠিকানা *</label><textarea id="addr" placeholder="বাড়ি/রোড, এলাকা, থানা, জেলা"></textarea></div><button class="btn blue" style="width:100%" onclick="order()">💬 WhatsApp-এ Order পাঠান</button><a class="btn dark" style="display:block;text-align:center;margin-top:8px" href="tel:${PHONE}">📞 ফোনে Order করুন</a>`:""}`)}
+function order(){let n=document.getElementById("name").value.trim(),ph=document.getElementById("phone").value.trim(),ad=document.getElementById("addr").value.trim();if(!n||!ph||!ad)return alert("নাম, ফোন ও ঠিকানা দিন।");let total=0,items=cart.map(x=>{let p=products.find(a=>a.id===x.id);total+=p.price*x.qty;return p.name+" × "+x.qty+" = "+money(p.price*x.qty)}).join("\n");let msg=`BD Bazar Order%0A%0Aনাম: ${encodeURIComponent(n)}%0Aফোন: ${encodeURIComponent(ph)}%0Aঠিকানা: ${encodeURIComponent(ad)}%0A%0Aপণ্য:%0A${encodeURIComponent(items)}%0A%0ামোট: ${money(total)}%0APayment: Cash on Delivery`;window.open(`https://wa.me/${WA}?text=${msg}`,"_blank")}
+function show(x){document.getElementById("box").innerHTML=x;document.getElementById("modal").classList.add("on")}function closeM(){document.getElementById("modal").classList.remove("on")}save();render();
+</script></body></html>
