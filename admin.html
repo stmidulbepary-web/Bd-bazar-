@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD Bazar Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f5f7fb;color:#101828}
+.wrap{max-width:900px;margin:auto;padding:20px}.box{background:#fff;padding:20px;border-radius:18px;margin-bottom:18px;border:1px solid #e5e7eb}
+h1{margin-top:0}.field{margin:12px 0}label{display:block;font-weight:700;margin-bottom:6px}
+input,textarea{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font:inherit}textarea{min-height:100px}
+button{border:0;padding:11px 15px;border-radius:10px;font-weight:700;cursor:pointer}.blue{background:#1769ff;color:#fff}.red{background:#d92d20;color:#fff}.gray{background:#eee}
+.product{background:#fff;padding:15px;border:1px solid #ddd;border-radius:14px;margin:10px 0;display:flex;gap:15px;align-items:center}
+.product img{width:80px;height:80px;object-fit:cover;border-radius:10px}.info{flex:1}.actions{display:flex;gap:7px;flex-wrap:wrap}.hidden{display:none}
+@media(max-width:600px){.product{align-items:flex-start;flex-direction:column}.product img{width:100%;height:180px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🛍️ BD Bazar Admin</h1>
+<div id="loginBox" class="box">
+<h2>🔐 Admin Login</h2>
+<div class="field"><label>Admin Password</label><input id="password" type="password" placeholder="Password লিখুন"></div>
+<button class="blue" onclick="login()">Login</button><p id="loginMsg"></p>
+</div>
+<div id="adminPanel" class="hidden">
+<div class="box">
+<h2 id="formTitle">➕ নতুন Product</h2>
+<div class="field"><label>Product Name *</label><input id="name" placeholder="Product-এর নাম"></div>
+<div class="field"><label>Price *</label><input id="price" type="number" placeholder="যেমন 650"></div>
+<div class="field"><label>Category</label><input id="category" placeholder="যেমন Gadget"></div>
+<div class="field"><label>Product Description</label><textarea id="description" placeholder="Product-এর বিস্তারিত বিবরণ"></textarea></div>
+<div class="field"><label>ছবি ১-এর Link</label><input id="image1" placeholder="https://..."></div>
+<div class="field"><label>ছবি ২-এর Link</label><input id="image2" placeholder="https://..."></div>
+<div class="field"><label>ছবি ৩-এর Link</label><input id="image3" placeholder="https://..."></div>
+<button class="blue" onclick="saveProduct()">💾 Product Save</button>
+<button class="gray" onclick="clearForm()">Clear</button>
+</div>
+<div class="box"><h2>📦 Products</h2><div id="products"></div></div>
+</div>
+</div>
+<script>
+const SUPABASE_URL="https://dpvjyhnhcouyaidcmlpj.supabase.co";
+const SUPABASE_KEY="YOUR_SUPABASE_ANON_KEY";
+const ADMIN_PASSWORD="123456";
+let editingId=null;
+
+function login(){
+ const password=document.getElementById("password").value;
+ if(password!==ADMIN_PASSWORD){document.getElementById("loginMsg").innerHTML="❌ Password ভুল।";return;}
+ document.getElementById("loginBox").classList.add("hidden");
+ document.getElementById("adminPanel").classList.remove("hidden");
+ loadProducts();
+}
+async function loadProducts(){
+ const response=await fetch(SUPABASE_URL+"/rest/v1/products?select=*&order=id.desc",{headers:{"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY}});
+ const data=await response.json();
+ if(!Array.isArray(data)){document.getElementById("products").innerHTML="Products load হয়নি।";return;}
+ document.getElementById("products").innerHTML=data.map(p=>`
+ <div class="product">
+ <img src="${p.images?.[0]||""}">
+ <div class="info"><b>${escapeHTML(p.name)}</b><br>৳${Number(p.price).toLocaleString("bn-BD")}<br><small>${escapeHTML(p.category||"")}</small></div>
+ <div class="actions">
+ <button class="blue" onclick="editProduct(${p.id})">✏️ Edit</button>
+ <button class="red" onclick="deleteProduct(${p.id})">🗑️ Delete</button>
+ </div>
+ </div>`).join("");
+}
+async function saveProduct(){
+ const name=document.getElementById("name").value.trim();
+ const price=Number(document.getElementById("price").value);
+ const category=document.getElementById("category").value.trim();
+ const description=document.getElementById("description").value.trim();
+ const images=[document.getElementById("image1").value.trim(),document.getElementById("image2").value.trim(),document.getElementById("image3").value.trim()].filter(Boolean);
+ if(!name||!price){alert("Product Name এবং Price দিন।");return;}
+ const data={name,price,category,description,images,active:true};
+ let response;
+ if(editingId){
+  response=await fetch(SUPABASE_URL+"/rest/v1/products?id=eq."+editingId,{method:"PATCH",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Prefer":"return=minimal"},body:JSON.stringify(data)});
+ }else{
+  response=await fetch(SUPABASE_URL+"/rest/v1/products",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Prefer":"return=minimal"},body:JSON.stringify(data)});
+ }
+ if(!response.ok){alert("Product Save হয়নি।");return;}
+ alert(editingId?"Product Update হয়েছে।":"নতুন Product Add হয়েছে।");
+ clearForm();loadProducts();
+}
+async function editProduct(id){
+ const response=await fetch(SUPABASE_URL+"/rest/v1/products?id=eq."+id+"&select=*",{headers:{"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY}});
+ const data=await response.json();if(!data.length)return;
+ const p=data[0];editingId=id;
+ document.getElementById("formTitle").textContent="✏️ Product Edit";
+ document.getElementById("name").value=p.name||"";
+ document.getElementById("price").value=p.price||"";
+ document.getElementById("category").value=p.category||"";
+ document.getElementById("description").value=p.description||"";
+ document.getElementById("image1").value=p.images?.[0]||"";
+ document.getElementById("image2").value=p.images?.[1]||"";
+ document.getElementById("image3").value=p.images?.[2]||"";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+async function deleteProduct(id){
+ if(!confirm("এই Product Delete করতে চান?"))return;
+ const response=await fetch(SUPABASE_URL+"/rest/v1/products?id=eq."+id,{method:"DELETE",headers:{"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY}});
+ if(!response.ok){alert("Delete হয়নি।");return;} alert("Product Delete হয়েছে।");loadProducts();
+}
+function clearForm(){
+ editingId=null;document.getElementById("formTitle").textContent="➕ নতুন Product";
+ ["name","price","category","description","image1","image2","image3"].forEach(id=>document.getElementById(id).value="");
+}
+function escapeHTML(text){return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+</script>
+</body>
+</html>
