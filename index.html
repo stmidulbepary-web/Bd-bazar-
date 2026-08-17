@@ -3,53 +3,296 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BD Bazar</title>
+<title>BD Bazar — Online Shop</title>
 
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f5f7fb;color:#101828}
-button,input,select{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer;border:0}
-.nav{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #ddd;padding:12px 16px;display:flex;gap:10px;align-items:center}
-.logo{font-size:24px;font-weight:900;white-space:nowrap}.logo b{color:#1769ff}
-.search{flex:1}.search input{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px}
-.btn{padding:11px 14px;border-radius:11px;font-weight:700}
-.blue{background:#1769ff;color:white}.dark{background:#101828;color:white}.red{background:#d92d20;color:white}
+
+.nav{
+position:sticky;top:0;z-index:10;background:#fff;
+border-bottom:1px solid #e5e7eb;padding:12px 16px;
+display:flex;gap:10px;align-items:center
+}
+
+.logo{font-size:24px;font-weight:900;white-space:nowrap}
+.logo b{color:#1769ff}
+
+.search{flex:1}
+.search input{
+width:100%;padding:12px 15px;border:1px solid #ddd;
+border-radius:12px
+}
+
+.btn{
+padding:12px 15px;border-radius:11px;
+font-weight:800
+}
+
+.blue{background:#1769ff;color:#fff}
+.dark{background:#101828;color:#fff}
+
 .wrap{max-width:1150px;margin:auto;padding:20px}
-.hero{background:linear-gradient(120deg,#12213f,#1769ff);color:white;padding:35px 25px;border-radius:24px;margin-bottom:25px}
-.hero h1{font-size:42px;margin:0 0 10px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden}
-.pic{width:100%;aspect-ratio:1.1;object-fit:cover}
-.body{padding:15px}.tag{background:#eaf2ff;color:#175cd3;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:bold}
-.price{font-size:22px;font-weight:900;margin:12px 0}
-.desc{color:#667085;line-height:1.5}
-.actions{display:flex;gap:8px}.actions button{flex:1}
-.modal{display:none;position:fixed;inset:0;background:#0008;z-index:30;padding:15px;overflow:auto}
-.modal.on{display:flex;align-items:center;justify-content:center}
-.box{background:white;border-radius:20px;padding:20px;width:min(760px,100%);position:relative}
-.close{position:absolute;right:10px;top:10px;border-radius:50%;padding:8px 11px}
-.detail{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.detail img{width:100%;border-radius:15px}
-.thumbs{display:flex;gap:8px;margin-top:8px}
-.thumbs img{width:65px;height:65px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent}
-.field{margin:10px 0}.field label{display:block;font-weight:bold;margin-bottom:5px}
-.field input,.field select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px}
-.sum{background:#f8fafc;padding:12px;border-radius:12px}
-.cartitem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
-.cartitem img{width:55px;height:55px;object-fit:cover;border-radius:8px}
-.cartinfo{flex:1}.qty{display:flex;gap:5px;align-items:center}
-.qty button{width:30px;height:30px;border-radius:7px;background:#eee}
-.remove{background:#fee4e2;color:#b42318;padding:7px;border-radius:8px}
-.total{font-size:20px;font-weight:900;padding-top:12px}
-.notice{background:#ecfdf3;color:#067647;padding:12px;border-radius:10px;line-height:1.6}
-.delivery{background:#eff8ff;color:#175cd3;padding:12px;border-radius:10px;line-height:1.6;margin:12px 0}
-.payment{background:#fff7ed;color:#9a3412;padding:12px;border-radius:10px;line-height:1.6;margin:10px 0}
-.empty{text-align:center;padding:25px;color:#667085}
-.foot{background:#0b1220;color:#ddd;padding:30px 20px;margin-top:30px}
-.success{text-align:center;padding:25px}.success .icon{font-size:55px}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.detail{grid-template-columns:1fr}}
-@media(max-width:550px){.grid{grid-template-columns:1fr}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.hero h1{font-size:32px}}
+
+.hero{
+background:linear-gradient(120deg,#12213f,#1769ff);
+color:#fff;padding:38px 25px;border-radius:25px;
+margin-bottom:25px
+}
+
+.hero h1{
+font-size:clamp(32px,5vw,50px);
+margin:0 0 10px
+}
+
+.hero p{font-size:18px;line-height:1.7}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px
+}
+
+.card{
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:18px;
+overflow:hidden
+}
+
+.card-img{
+width:100%;
+aspect-ratio:1.1;
+object-fit:cover
+}
+
+.body{padding:16px}
+
+.tag{
+display:inline-block;
+background:#eaf2ff;
+color:#175cd3;
+padding:5px 9px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold
+}
+
+.card h3{margin:10px 0 6px}
+
+.desc{
+color:#667085;
+line-height:1.6;
+font-size:14px
+}
+
+.price{
+font-size:23px;
+font-weight:900;
+margin:12px 0
+}
+
+.order-btn{
+width:100%;
+font-size:16px
+}
+
+/* Product page */
+
+.product-page{
+background:#fff;
+border-radius:20px;
+padding:20px
+}
+
+.product-detail{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px
+}
+
+.main-image{
+width:100%;
+border-radius:16px;
+max-height:520px;
+object-fit:cover
+}
+
+.thumbs{
+display:flex;
+gap:8px;
+margin-top:10px;
+flex-wrap:wrap
+}
+
+.thumbs img{
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:9px;
+cursor:pointer;
+border:2px solid transparent
+}
+
+.thumbs img:hover{
+border-color:#1769ff
+}
+
+.big-desc{
+color:#475467;
+line-height:1.8;
+white-space:pre-line
+}
+
+/* Modal */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:#0009;
+z-index:50;
+padding:15px;
+overflow:auto
+}
+
+.modal.on{
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+.box{
+background:#fff;
+border-radius:20px;
+padding:20px;
+width:min(650px,100%);
+position:relative
+}
+
+.close{
+position:absolute;
+right:10px;
+top:10px;
+background:#eee;
+border-radius:50%;
+padding:8px 11px
+}
+
+.field{margin:12px 0}
+
+.field label{
+display:block;
+font-weight:800;
+margin-bottom:6px
+}
+
+.field input,
+.field textarea,
+.field select{
+width:100%;
+padding:12px;
+border:1px solid #d0d5dd;
+border-radius:10px;
+outline:none
+}
+
+.field textarea{
+min-height:80px;
+resize:vertical
+}
+
+.delivery{
+background:#eff8ff;
+color:#175cd3;
+padding:13px;
+border-radius:11px;
+line-height:1.7;
+margin:12px 0
+}
+
+.payment{
+background:#fff7ed;
+color:#9a3412;
+padding:13px;
+border-radius:11px;
+line-height:1.7;
+margin:12px 0
+}
+
+.summary{
+background:#f8fafc;
+padding:15px;
+border-radius:12px;
+margin:12px 0
+}
+
+.summary-row{
+display:flex;
+justify-content:space-between;
+padding:6px 0
+}
+
+.total{
+font-size:20px;
+font-weight:900;
+border-top:1px solid #ddd;
+margin-top:8px;
+padding-top:10px
+}
+
+.success{
+text-align:center;
+padding:20px
+}
+
+.success-icon{
+font-size:55px
+}
+
+.share-box{
+display:flex;
+gap:8px;
+margin-top:12px
+}
+
+.share-box button{
+flex:1
+}
+
+.notice{
+background:#ecfdf3;
+color:#067647;
+padding:12px;
+border-radius:10px;
+line-height:1.6
+}
+
+.foot{
+background:#0b1220;
+color:#ddd;
+padding:30px 20px;
+margin-top:30px
+}
+
+.empty{
+text-align:center;
+padding:40px
+}
+
+@media(max-width:800px){
+.grid{grid-template-columns:repeat(2,1fr)}
+.product-detail{grid-template-columns:1fr}
+}
+
+@media(max-width:550px){
+.grid{grid-template-columns:1fr}
+.nav{flex-wrap:wrap}
+.search{order:3;flex-basis:100%}
+.share-box{flex-direction:column}
+}
 </style>
 </head>
 
@@ -57,17 +300,20 @@ button{cursor:pointer;border:0}
 
 <nav class="nav">
 
-<div class="logo">🛍️ BD <b>Bazar</b></div>
-
-<div class="search">
-<input id="q" oninput="render()" placeholder="পণ্য খুঁজুন...">
+<div class="logo">
+🛍️ BD <b>Bazar</b>
 </div>
 
-<a class="btn" href="tel:01954959814">📞 Call</a>
+<div class="search">
+<input
+id="search"
+placeholder="পণ্য খুঁজুন..."
+oninput="renderProducts()">
+</div>
 
-<button class="btn dark" onclick="cartOpen()">
-🛒 Cart (<span id="cc">0</span>)
-</button>
+<a class="btn" href="tel:01954959814">
+📞 কল করুন
+</a>
 
 </nav>
 
@@ -75,50 +321,80 @@ button{cursor:pointer;border:0}
 <main class="wrap">
 
 <section class="hero">
+
 <h1>BD Bazar</h1>
+
 <p>
-Gadget কিনুন সহজে। Delivery Charge Advance,
-বাকি Product Price Cash on Delivery।
+আপনার পছন্দের Product দেখুন এবং সরাসরি
+<strong>এখনই অর্ডার করুন</strong>।
 </p>
+
 </section>
 
-<h2>সব Product</h2>
 
-<div id="grid" class="grid"></div>
+<div id="productArea"></div>
 
 </main>
 
 
 <footer class="foot">
-<b>BD Bazar</b>
+
+<b>🛍️ BD Bazar</b>
+
 <p>📞 01954959814</p>
-<p>🚚 ঢাকা ৳70 • ঢাকার বাইরে ৳130</p>
-<p>💵 Delivery Charge Advance • Product COD</p>
+
+<p>🚚 ঢাকার ভিতরে ডেলিভারি চার্জ ৳70</p>
+
+<p>🚚 ঢাকার বাইরে ডেলিভারি চার্জ ৳130</p>
+
+<p>
+💰 ডেলিভারি চার্জ অগ্রিম পরিশোধ করতে হবে।
+</p>
+
+<p>
+💵 পণ্যের বাকি টাকা Cash on Delivery।
+</p>
+
 </footer>
 
 
-<div id="modal" class="modal" onclick="if(event.target===this)closeM()">
-<div id="box" class="box"></div>
+<div
+id="modal"
+class="modal"
+onclick="if(event.target===this)closeModal()">
+
+<div id="modalBox" class="box"></div>
+
 </div>
 
 
 <script>
 
-const WA="8801954959814";
+/* =========================================
+   SETTINGS
+========================================= */
+
+const PHONE="01954959814";
+
+const WHATSAPP="8801954959814";
 
 const SUPABASE_FUNCTION=
 "https://dpvjyhnhcouyaidcmlpj.supabase.co/functions/v1/bright-task";
 
-const DHAKA_DELIVERY=70;
-const OUTSIDE_DELIVERY=130;
-
 const BKASH="01954959814";
+
 const NAGAD="01954959814";
 
+const DHAKA_DELIVERY=70;
 
-/* ==========================
+const OUTSIDE_DELIVERY=130;
+
+
+/* =========================================
    PRODUCTS
-   ========================== */
+   নতুন Product দিতে নিচের মতো একটি object
+   copy করে যোগ করবে।
+========================================= */
 
 const products=[
 
@@ -126,299 +402,559 @@ const products=[
 id:1,
 name:"Wireless Mini Gadget",
 price:650,
-cat:"Gadgets",
+category:"Gadget",
+
 images:[
-"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"ছোট ও ব্যবহারযোগ্য everyday gadget।"
+
+description:
+"ছোট ও ব্যবহারযোগ্য everyday gadget।\n\nবাসা, অফিস ও দৈনন্দিন ব্যবহারের জন্য উপযোগী।\n\nসুন্দর ডিজাইন এবং সহজ ব্যবহার।"
+
 },
 
 {
 id:2,
 name:"Smart LED Gadget",
 price:850,
-cat:"Gadgets",
+category:"Gadget",
+
 images:[
-"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"Modern LED design ও আকর্ষণীয় look।"
+
+description:
+"Modern LED design এবং আকর্ষণীয় look।\n\nদৈনন্দিন ব্যবহারের জন্য একটি সুন্দর gadget।"
+
 },
 
 {
 id:3,
 name:"Bluetooth Speaker",
 price:1250,
-cat:"Audio",
+category:"Audio",
+
 images:[
-"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"Portable speaker—বাসা ও ভ্রমণের জন্য।"
+
+description:
+"Portable Bluetooth Speaker।\n\nবাসা, ভ্রমণ এবং বাইরে ব্যবহারের জন্য উপযোগী।\n\nসুন্দর sound এবং সহজে বহন করা যায়।"
+
 },
 
 {
 id:4,
 name:"Smart Watch",
 price:1650,
-cat:"Wearable",
+category:"Wearable",
+
 images:[
-"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"স্টাইলিশ daily-use smart watch।"
+
+description:
+"স্টাইলিশ Smart Watch।\n\nDaily use-এর জন্য উপযোগী।\n\nআকর্ষণীয় ডিজাইন এবং আরামদায়ক ব্যবহার।"
+
 },
 
 {
 id:5,
 name:"USB Rechargeable Fan",
 price:790,
-cat:"Home Gadget",
+category:"Home Gadget",
+
 images:[
-"https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1587033411391-5d9e51cce126?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"Desk বা personal cooling-এর জন্য।"
+
+description:
+"USB Rechargeable Fan।\n\nDesk এবং personal cooling-এর জন্য ব্যবহার করা যায়।"
+
 },
 
 {
 id:6,
 name:"Fast Charging Cable",
 price:390,
-cat:"Accessories",
+category:"Accessories",
+
 images:[
-"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
-"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80"
 ],
-desc:"দৈনন্দিন charging-এর জন্য practical cable।"
+
+description:
+"দৈনন্দিন charging-এর জন্য practical cable।\n\nসহজে বহন করা যায়।"
+
 }
 
 ];
 
 
-let cart=JSON.parse(localStorage.getItem("cart")||"[]");
+/* =========================================
+   MONEY
+========================================= */
 
+function money(number){
 
-function money(n){
-return "৳"+Number(n).toLocaleString("bn-BD");
+return "৳"+Number(number).toLocaleString("bn-BD");
+
 }
 
 
-function save(){
-localStorage.setItem("cart",JSON.stringify(cart));
-document.getElementById("cc").textContent=
-cart.reduce((a,x)=>a+x.qty,0);
-}
+/* =========================================
+   GET PRODUCT FROM URL
+========================================= */
 
+function getProductFromURL(){
 
-function render(){
+const params=
+new URLSearchParams(window.location.search);
 
-let q=document.getElementById("q").value.toLowerCase();
+const id=params.get("product");
 
-let list=products.filter(p=>
-(p.name+p.cat+p.desc).toLowerCase().includes(q)
+if(!id)return null;
+
+return products.find(
+p=>String(p.id)===String(id)
 );
 
-document.getElementById("grid").innerHTML=
-
-list.map(p=>`
-
-<article class="card">
-
-<img class="pic" src="${p.images[0]}" alt="${p.name}">
-
-<div class="body">
-
-<span class="tag">${p.cat}</span>
-
-<h3>${p.name}</h3>
-
-<p class="desc">${p.desc}</p>
-
-<div class="price">${money(p.price)}</div>
-
-<div class="actions">
-
-<button class="btn" onclick="details(${p.id})">
-Details
-</button>
-
-<button class="btn blue" onclick="add(${p.id})">
-🛒 Add
-</button>
-
-</div>
-
-</div>
-
-</article>
-
-`).join("");
-
 }
 
 
-function add(id){
+/* =========================================
+   RENDER PRODUCTS
+========================================= */
 
-let x=cart.find(a=>a.id===id);
+function renderProducts(){
 
-if(x)x.qty++;
-else cart.push({id:id,qty:1});
+const area=
+document.getElementById("productArea");
 
-save();
-
-}
-
-
-function details(id){
-
-let p=products.find(x=>x.id===id);
-
-show(`
-
-<button class="close" onclick="closeM()">✕</button>
-
-<div class="detail">
-
-<div>
-
-<img id="mainImg" src="${p.images[0]}">
-
-<div class="thumbs">
-
-${p.images.map(img=>`
-<img src="${img}" onclick="document.getElementById('mainImg').src='${img}'">
-`).join("")}
-
-</div>
-
-</div>
-
-<div>
-
-<span class="tag">${p.cat}</span>
-
-<h2>${p.name}</h2>
-
-<div class="price">${money(p.price)}</div>
-
-<p class="desc">${p.desc}</p>
-
-<div class="notice">
-🚚 Delivery Charge Advance<br>
-💵 Product Price Cash on Delivery
-</div>
-
-<button class="btn blue"
-style="width:100%;margin-top:12px"
-onclick="add(${p.id});closeM()">
-
-🛒 Add to Cart
-
-</button>
-
-</div>
-
-</div>
-
-`);
-
-}
+const search=
+(document.getElementById("search").value||"")
+.toLowerCase()
+.trim();
 
 
-function cartOpen(){
+const directProduct=
+getProductFromURL();
 
-if(!cart.length){
 
-show(`
+/* Direct Product Link */
 
-<button class="close" onclick="closeM()">✕</button>
+if(directProduct){
 
-<div class="empty">
-<h2>🛒 Cart খালি</h2>
-<p>Product যোগ করুন।</p>
-</div>
-
-`);
+renderProductPage(directProduct);
 
 return;
 
 }
 
 
-let items=cart.map(x=>{
+/* Search */
 
-let p=products.find(a=>a.id===x.id);
+const list=products.filter(p=>
 
-return `
+(
+p.name+
+p.category+
+p.description
+)
+.toLowerCase()
+.includes(search)
 
-<div class="cartitem">
+);
 
-<img src="${p.images[0]}">
 
-<div class="cartinfo">
+if(!list.length){
 
-<b>${p.name}</b>
+area.innerHTML=`
 
-<br>
+<div class="empty">
 
-${money(p.price)}
+<h2>কোনো Product পাওয়া যায়নি</h2>
 
-</div>
-
-<div class="qty">
-
-<button onclick="changeQty(${p.id},-1)">−</button>
-
-<b>${x.qty}</b>
-
-<button onclick="changeQty(${p.id},1)">+</button>
-
-</div>
-
-<button class="remove"
-onclick="removeItem(${p.id})">
-
-🗑️
-
-</button>
+<p>অন্য নামে খুঁজে দেখুন।</p>
 
 </div>
 
 `;
 
-}).join("");
+return;
+
+}
 
 
-let subtotal=cart.reduce(
-(s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0
+area.innerHTML=`
+
+<h2>সব Product</h2>
+
+<div class="grid">
+
+${list.map(p=>`
+
+<article class="card">
+
+<img
+class="card-img"
+src="${p.images[0]}"
+alt="${p.name}">
+
+<div class="body">
+
+<span class="tag">
+${p.category}
+</span>
+
+<h3>${p.name}</h3>
+
+<p class="desc">
+${shortDescription(p.description)}
+</p>
+
+<div class="price">
+${money(p.price)}
+</div>
+
+<button
+class="btn blue order-btn"
+onclick="openProduct(${p.id})">
+
+🛒 এখনই অর্ডার করুন
+
+</button>
+
+</div>
+
+</article>
+
+`).join("")}
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   SHORT DESCRIPTION
+========================================= */
+
+function shortDescription(text){
+
+return text
+.replace(/\n/g," ")
+.slice(0,120);
+
+}
+
+
+/* =========================================
+   OPEN PRODUCT
+========================================= */
+
+function openProduct(id){
+
+window.location.href=
+window.location.pathname+
+"?product="+id;
+
+}
+
+
+/* =========================================
+   PRODUCT PAGE
+========================================= */
+
+function renderProductPage(p){
+
+document.title=
+p.name+" — BD Bazar";
+
+
+document.getElementById("productArea").innerHTML=`
+
+<div class="product-page">
+
+<div class="product-detail">
+
+<div>
+
+<img
+id="mainProductImage"
+class="main-image"
+src="${p.images[0]}"
+alt="${p.name}">
+
+
+<div class="thumbs">
+
+${p.images.map(img=>`
+
+<img
+src="${img}"
+onclick="changeMainImage('${img}')">
+
+`).join("")}
+
+</div>
+
+
+<div class="share-box">
+
+<button
+class="btn dark"
+onclick="copyProductLink()">
+
+🔗 Link Copy
+
+</button>
+
+<button
+class="btn blue"
+onclick="shareProduct()">
+
+📤 Share
+
+</button>
+
+</div>
+
+</div>
+
+
+<div>
+
+<span class="tag">
+${p.category}
+</span>
+
+<h1>${p.name}</h1>
+
+<div class="price">
+${money(p.price)}
+</div>
+
+
+<h3>📝 Product-এর বিবরণ</h3>
+
+<p class="big-desc">
+${p.description}
+</p>
+
+
+<div class="notice">
+
+🚚 ডেলিভারি চার্জ অগ্রিম পরিশোধ করতে হবে।
+
+<br>
+
+ঢাকার ভিতরে: <b>৳70</b>
+
+<br>
+
+ঢাকার বাইরে: <b>৳130</b>
+
+<br><br>
+
+💵 পণ্যের বাকি টাকা ডেলিভারির সময়
+<b>Cash on Delivery</b> দিতে হবে।
+
+</div>
+
+
+<button
+class="btn blue order-btn"
+style="margin-top:15px"
+onclick="openOrder(${p.id})">
+
+🛒 এখনই অর্ডার করুন
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   CHANGE MAIN IMAGE
+========================================= */
+
+function changeMainImage(url){
+
+document.getElementById(
+"mainProductImage"
+).src=url;
+
+}
+
+
+/* =========================================
+   PRODUCT LINK
+========================================= */
+
+function productLink(){
+
+return window.location.href;
+
+}
+
+
+/* =========================================
+   COPY LINK
+========================================= */
+
+async function copyProductLink(){
+
+try{
+
+await navigator.clipboard.writeText(
+productLink()
 );
 
+alert("Product Link Copy হয়েছে।");
 
-show(`
+}catch(e){
 
-<button class="close" onclick="closeM()">✕</button>
+prompt(
+"এই Link Copy করুন:",
+productLink()
+);
 
-<h2>🛒 Cart & Checkout</h2>
+}
 
-<div class="sum">
+}
 
-${items}
 
-<div class="row total">
-<span>Product Total</span>
-<span>${money(subtotal)}</span>
+/* =========================================
+   SHARE
+========================================= */
+
+async function shareProduct(){
+
+const p=getProductFromURL();
+
+if(!p)return;
+
+const data={
+title:p.name,
+text:
+p.name+
+" — "+
+money(p.price)+
+"\n\nঅর্ডার করতে Link-এ যান:",
+url:productLink()
+};
+
+
+if(navigator.share){
+
+try{
+
+await navigator.share(data);
+
+}catch(e){}
+
+}else{
+
+copyProductLink();
+
+}
+
+}
+
+
+/* =========================================
+   ORDER MODAL
+========================================= */
+
+function openOrder(id){
+
+const p=
+products.find(x=>x.id===id);
+
+if(!p)return;
+
+
+showModal(`
+
+<button
+class="close"
+onclick="closeModal()">
+
+✕
+</button>
+
+
+<h2>🛒 অর্ডার করুন</h2>
+
+
+<div class="summary">
+
+<div class="summary-row">
+
+<span>Product</span>
+
+<b>${p.name}</b>
+
+</div>
+
+
+<div class="summary-row">
+
+<span>Product Price</span>
+
+<b>${money(p.price)}</b>
+
 </div>
 
 </div>
+
+
+<div class="field">
+
+<label>
+পরিমাণ *
+</label>
+
+<input
+id="quantity"
+type="number"
+min="1"
+value="1"
+oninput="calculateOrder(${p.id})">
+
+</div>
+
+
+<div id="orderTotal">
+
+</div>
+
 
 <div class="field">
 
 <label>নাম *</label>
 
-<input id="name" placeholder="আপনার নাম">
+<input
+id="customerName"
+placeholder="আপনার নাম">
 
 </div>
 
@@ -427,7 +963,10 @@ ${items}
 
 <label>মোবাইল নাম্বার *</label>
 
-<input id="phone" placeholder="01XXXXXXXXX">
+<input
+id="customerPhone"
+placeholder="01XXXXXXXXX"
+inputmode="tel">
 
 </div>
 
@@ -436,7 +975,9 @@ ${items}
 
 <label>গ্রামের নাম *</label>
 
-<input id="village" placeholder="গ্রামের নাম">
+<input
+id="customerVillage"
+placeholder="গ্রামের নাম">
 
 </div>
 
@@ -445,7 +986,9 @@ ${items}
 
 <label>উপজেলা *</label>
 
-<input id="upazila" placeholder="উপজেলার নাম">
+<input
+id="customerUpazila"
+placeholder="উপজেলার নাম">
 
 </div>
 
@@ -454,18 +997,24 @@ ${items}
 
 <label>জেলা *</label>
 
-<input id="district" placeholder="জেলার নাম">
+<input
+id="customerDistrict"
+placeholder="জেলার নাম">
 
 </div>
 
 
 <div class="field">
 
-<label>Delivery Area *</label>
+<label>ডেলিভারি এলাকা *</label>
 
-<select id="area" onchange="updateTotal()">
+<select
+id="deliveryArea"
+onchange="calculateOrder(${p.id})">
 
-<option value="">নির্বাচন করুন</option>
+<option value="">
+নির্বাচন করুন
+</option>
 
 <option value="dhaka">
 ঢাকার ভিতরে — ৳70
@@ -480,20 +1029,30 @@ ${items}
 </div>
 
 
-<div id="deliveryBox"></div>
+<div id="paymentSection"></div>
 
 
 <div class="field">
 
-<label>Delivery Charge Advance Payment *</label>
+<label>
+ডেলিভারি চার্জ অগ্রিম পরিশোধের মাধ্যম *
+</label>
 
-<select id="payment">
+<select
+id="paymentMethod"
+onchange="showPayment(${p.id})">
 
-<option value="">Payment Method</option>
+<option value="">
+নির্বাচন করুন
+</option>
 
-<option value="bKash">📱 bKash</option>
+<option value="bKash">
+📱 বিকাশ
+</option>
 
-<option value="Nagad">📱 Nagad</option>
+<option value="Nagad">
+📱 নগদ
+</option>
 
 </select>
 
@@ -503,124 +1062,86 @@ ${items}
 <div id="paymentInfo"></div>
 
 
-<button class="btn blue"
-style="width:100%"
-onclick="order()">
+<button
+class="btn blue order-btn"
+onclick="submitOrder(${p.id})">
 
-✅ Order Confirm করুন
+✅ অর্ডার নিশ্চিত করুন
 
 </button>
 
 `);
 
-
-document.getElementById("payment").addEventListener("change",showPayment);
-
-}
-
-
-function changeQty(id,n){
-
-let x=cart.find(a=>a.id===id);
-
-if(!x)return;
-
-x.qty+=n;
-
-if(x.qty<=0){
-
-cart=cart.filter(a=>a.id!==id);
-
-}
-
-save();
-
-cartOpen();
+calculateOrder(p.id);
 
 }
 
 
-function removeItem(id){
+/* =========================================
+   CALCULATE
+========================================= */
 
-cart=cart.filter(a=>a.id!==id);
+function calculateOrder(id){
 
-save();
+const p=
+products.find(x=>x.id===id);
 
-cartOpen();
-
-}
+if(!p)return;
 
 
-function updateTotal(){
+const qty=
+Math.max(
+1,
+Number(
+document.getElementById("quantity")?.value||1
+)
+);
 
-let area=document.getElementById("area").value;
 
-let charge=0;
+const area=
+document.getElementById("deliveryArea")?.value||"";
 
-if(area==="dhaka")charge=DHAKA_DELIVERY;
 
-if(area==="outside")charge=OUTSIDE_DELIVERY;
+let delivery=0;
 
-document.getElementById("deliveryBox").innerHTML=
+if(area==="dhaka")delivery=DHAKA_DELIVERY;
 
-charge?`
+if(area==="outside")delivery=OUTSIDE_DELIVERY;
 
-<div class="delivery">
 
-🚚 Delivery Charge Advance:
-<b>${money(charge)}</b>
+const productTotal=
+p.price*qty;
 
-<br>
 
-Product-এর বাকি টাকা Delivery-এর সময়
-<b>Cash on Delivery</b> দিতে হবে।
+document.getElementById("orderTotal").innerHTML=`
+
+<div class="summary">
+
+<div class="summary-row">
+
+<span>Product Total</span>
+
+<b>${money(productTotal)}</b>
 
 </div>
 
-`:"";
 
-}
+<div class="summary-row">
+
+<span>ডেলিভারি চার্জ অগ্রিম</span>
+
+<b>${delivery?money(delivery):"এলাকা নির্বাচন করুন"}</b>
+
+</div>
 
 
-function showPayment(){
+<div class="summary-row total">
 
-let p=document.getElementById("payment").value;
+<span>অর্ডারের মোট</span>
 
-let area=document.getElementById("area").value;
+<b>${money(productTotal+delivery)}</b>
 
-let charge=
-area==="dhaka"
-?DHAKA_DELIVERY
-:OUTSIDE_DELIVERY;
-
-if(!p){
-
-document.getElementById("paymentInfo").innerHTML="";
-
-return;
-
-}
-
-document.getElementById("paymentInfo").innerHTML=`
-
-<div class="payment">
-
-<b>${p} Delivery Charge Advance</b>
-
-<br><br>
-
-${p==="bKash"?"bKash Number":"Nagad Number"}:
-
-<b>${p==="bKash"?BKASH:NAGAD}</b>
-
-<br><br>
-
-Advance Amount:
-<b>${money(charge)}</b>
-
-<br><br>
-
-Transaction ID লাগবে না।
+</div>
 
 </div>
 
@@ -629,20 +1150,153 @@ Transaction ID লাগবে না।
 }
 
 
-async function order(){
+/* =========================================
+   PAYMENT INFO
+========================================= */
 
-let name=document.getElementById("name").value.trim();
-let phone=document.getElementById("phone").value.trim();
-let village=document.getElementById("village").value.trim();
-let upazila=document.getElementById("upazila").value.trim();
-let district=document.getElementById("district").value.trim();
-let area=document.getElementById("area").value;
-let payment=document.getElementById("payment").value;
+function showPayment(id){
+
+const method=
+document.getElementById("paymentMethod").value;
+
+const area=
+document.getElementById("deliveryArea").value;
 
 
-if(!name||!phone||!village||!upazila||!district){
+let charge=0;
 
-alert("সব Customer Information পূরণ করুন।");
+if(area==="dhaka")charge=DHAKA_DELIVERY;
+
+if(area==="outside")charge=OUTSIDE_DELIVERY;
+
+
+if(!method){
+
+document.getElementById("paymentInfo").innerHTML="";
+
+return;
+
+}
+
+
+if(!charge){
+
+document.getElementById("paymentInfo").innerHTML=`
+
+<div class="payment">
+
+আগে Delivery Area নির্বাচন করুন।
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+const number=
+method==="bKash"
+?BKASH
+:NAGAD;
+
+
+document.getElementById("paymentInfo").innerHTML=`
+
+<div class="payment">
+
+<b>
+${method==="bKash"?"📱 বিকাশ":"📱 নগদ"}
+</b>
+
+<br><br>
+
+${method==="bKash"
+?"বিকাশ নম্বর:"
+:"নগদ নম্বর:"}
+
+<b>${number}</b>
+
+<br><br>
+
+অগ্রিম দিতে হবে:
+
+<b>${money(charge)}</b>
+
+<br><br>
+
+⚠️ Transaction ID প্রয়োজন নেই।
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   SUBMIT ORDER
+========================================= */
+
+async function submitOrder(id){
+
+const p=
+products.find(x=>x.id===id);
+
+if(!p)return;
+
+
+const name=
+document.getElementById("customerName")
+.value.trim();
+
+const phone=
+document.getElementById("customerPhone")
+.value.trim();
+
+const village=
+document.getElementById("customerVillage")
+.value.trim();
+
+const upazila=
+document.getElementById("customerUpazila")
+.value.trim();
+
+const district=
+document.getElementById("customerDistrict")
+.value.trim();
+
+const area=
+document.getElementById("deliveryArea")
+.value;
+
+const payment=
+document.getElementById("paymentMethod")
+.value;
+
+const qty=
+Math.max(
+1,
+Number(
+document.getElementById("quantity")
+.value||1
+)
+);
+
+
+if(
+!name||
+!phone||
+!village||
+!upazila||
+!district
+){
+
+alert(
+"নাম, মোবাইল, গ্রাম, উপজেলা ও জেলা পূরণ করুন।"
+);
+
 return;
 
 }
@@ -650,7 +1304,10 @@ return;
 
 if(!area){
 
-alert("Delivery Area নির্বাচন করুন।");
+alert(
+"ডেলিভারি এলাকা নির্বাচন করুন।"
+);
+
 return;
 
 }
@@ -658,47 +1315,48 @@ return;
 
 if(!payment){
 
-alert("Delivery Charge Advance-এর Payment Method নির্বাচন করুন।");
+alert(
+"ডেলিভারি চার্জ অগ্রিম পরিশোধের মাধ্যম নির্বাচন করুন।"
+);
+
 return;
 
 }
 
 
-let deliveryCharge=
+const deliveryCharge=
 area==="dhaka"
 ?DHAKA_DELIVERY
 :OUTSIDE_DELIVERY;
 
 
-let subtotal=0;
-
-
-let orderItems=cart.map(x=>{
-
-let p=products.find(a=>a.id===x.id);
-
-subtotal+=p.price*x.qty;
-
-return{
-product_id:p.id,
-product_name:p.name,
-quantity:x.qty,
-price:p.price
-};
-
-});
-
-
-let total=subtotal+deliveryCharge;
-
-
-let areaName=
+const areaName=
 area==="dhaka"
 ?"ঢাকার ভিতরে"
 :"ঢাকার বাইরে";
 
 
-let data={
+const subtotal=
+p.price*qty;
+
+
+const total=
+subtotal+deliveryCharge;
+
+
+const orderItems=[
+
+{
+product_id:p.id,
+product_name:p.name,
+quantity:qty,
+price:p.price
+}
+
+];
+
+
+const data={
 
 customer_name:name,
 
@@ -729,26 +1387,39 @@ status:"new"
 
 try{
 
-let response=await fetch(
+
+/* Supabase */
+
+const response=
+await fetch(
 SUPABASE_FUNCTION,
 {
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify(data)
+
 }
 );
 
 
-let result=await response.json();
+const result=
+await response.json();
 
 
-if(!response.ok||!result.success){
+if(
+!response.ok||
+!result.success
+){
 
 console.error(result);
 
-alert("Order Save হয়নি।");
+alert(
+"Order Save হয়নি। আবার চেষ্টা করুন।"
+);
 
 return;
 
@@ -757,87 +1428,86 @@ return;
 
 /* WhatsApp */
 
-let productText=cart.map(x=>{
+const message=
 
-let p=products.find(a=>a.id===x.id);
+`🛍️ BD Bazar New Order
 
-return p.name+
-" × "+
-x.qty+
-" = "+
-money(p.price*x.qty);
+📦 Product: ${p.name}
 
-}).join("\n");
+🔢 Quantity: ${qty}
 
+💰 Product Price: ${money(subtotal)}
 
-let message=
+👤 নাম: ${name}
 
-`BD Bazar New Order
+📱 মোবাইল: ${phone}
 
-নাম: ${name}
-মোবাইল: ${phone}
-গ্রাম: ${village}
-উপজেলা: ${upazila}
-জেলা: ${district}
+🌳 গ্রাম: ${village}
 
-Delivery: ${areaName}
+🏘️ উপজেলা: ${upazila}
 
-Products:
-${productText}
+📍 জেলা: ${district}
 
-Product Total:
-${money(subtotal)}
+🚚 Delivery: ${areaName}
 
-Delivery Advance:
-${money(deliveryCharge)}
+💵 Delivery Charge Advance: ${money(deliveryCharge)}
 
-Total:
-${money(total)}
+📱 Advance Payment: ${payment}
 
-Advance Payment:
-${payment}
+💰 Product Balance: ${money(subtotal)}
 
-Product Balance:
-${money(subtotal)}
-
-Product Balance হবে Cash on Delivery.`;
+➡️ Product-এর বাকি টাকা Cash on Delivery।`;
 
 
 window.open(
-"https://wa.me/"+WA+
-"?text="+encodeURIComponent(message),
+"https://wa.me/"+
+WHATSAPP+
+"?text="+
+encodeURIComponent(message),
 "_blank"
 );
 
 
-cart=[];
+/* Success */
 
-save();
-
-
-document.getElementById("box").innerHTML=`
+document.getElementById(
+"modalBox"
+).innerHTML=`
 
 <div class="success">
 
-<div class="icon">✅</div>
+<div class="success-icon">
+✅
+</div>
 
-<h2>Order সফল হয়েছে!</h2>
+<h2>
+অর্ডার সফল হয়েছে!
+</h2>
 
 <p>
-আপনার Order গ্রহণ করা হয়েছে।
+আপনার অর্ডার গ্রহণ করা হয়েছে।
+</p>
+
+<div class="summary">
+
+<p>
+ডেলিভারি চার্জ অগ্রিম:
+<b>${money(deliveryCharge)}</b>
 </p>
 
 <p>
-Delivery Charge Advance: <b>${money(deliveryCharge)}</b>
+পণ্যের বাকি টাকা:
+<b>Cash on Delivery</b>
 </p>
 
-<p>
-Product-এর বাকি টাকা Delivery-এর সময়
-Cash on Delivery দিতে হবে।
-</p>
+</div>
 
-<button class="btn blue" onclick="closeM()">
+<button
+class="btn blue"
+onclick="closeModal()">
+
 ঠিক আছে
+
 </button>
 
 </div>
@@ -845,36 +1515,50 @@ Cash on Delivery দিতে হবে।
 `;
 
 
-}catch(e){
+}catch(error){
 
-console.error(e);
+console.error(error);
 
-alert("Server-এর সাথে যোগাযোগ করা যাচ্ছে না।");
+alert(
+"Server-এর সাথে যোগাযোগ করা যাচ্ছে না।"
+);
 
 }
-
-}
-
-
-function show(x){
-
-document.getElementById("box").innerHTML=x;
-
-document.getElementById("modal").classList.add("on");
 
 }
 
 
-function closeM(){
+/* =========================================
+   MODAL
+========================================= */
 
-document.getElementById("modal").classList.remove("on");
+function showModal(html){
+
+document.getElementById(
+"modalBox"
+).innerHTML=html;
+
+document.getElementById(
+"modal"
+).classList.add("on");
 
 }
 
 
-save();
+function closeModal(){
 
-render();
+document.getElementById(
+"modal"
+).classList.remove("on");
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+renderProducts();
 
 </script>
 
