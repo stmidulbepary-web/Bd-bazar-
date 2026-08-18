@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD Bazar — অনলাইন শপ</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f5f7fb;color:#101828}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+.nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.logo{font-size:24px;font-weight:900;white-space:nowrap}.logo b{color:#1769ff}.search{flex:1}.search input{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:12px}
+.btn{padding:11px 14px;border-radius:11px;font-weight:800}.blue{background:#1769ff;color:#fff}.dark{background:#101828;color:#fff}.red{background:#d92d20;color:#fff}.gray{background:#eee}
+.wrap{max-width:1150px;margin:auto;padding:20px}.hero{background:linear-gradient(120deg,#12213f,#1769ff);color:#fff;padding:38px 25px;border-radius:25px;margin-bottom:25px}.hero h1{font-size:clamp(34px,6vw,55px);margin:0 0 10px}.hero p{font-size:18px;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden}.card img{width:100%;aspect-ratio:1.1;object-fit:cover}.body{padding:16px}.tag{display:inline-block;background:#eaf2ff;color:#175cd3;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:bold}.card h3{margin:10px 0 6px}.desc{color:#667085;line-height:1.6;font-size:14px}.price{font-size:23px;font-weight:900;margin:12px 0}.full{width:100%}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:50;padding:15px;overflow:auto}.modal.on{display:flex;align-items:center;justify-content:center}.box{background:#fff;border-radius:20px;padding:20px;width:min(700px,100%);position:relative}.close{position:absolute;right:10px;top:10px;background:#eee;border-radius:50%;padding:8px 11px}
+.field{margin:12px 0}.field label{display:block;font-weight:800;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px}.field textarea{min-height:90px}.summary{background:#f8fafc;padding:15px;border-radius:12px;margin:12px 0}.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0}.total{font-size:20px;font-weight:900;border-top:1px solid #ddd;margin-top:8px;padding-top:10px}.notice{background:#ecfdf3;color:#067647;padding:13px;border-radius:11px;line-height:1.7}.payment{background:#fff7ed;color:#9a3412;padding:13px;border-radius:11px;line-height:1.7}
+.admin{display:none}.admin.on{display:block}.adminItem{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #ddd;padding:12px;border-radius:14px;margin:10px 0}.adminItem img{width:70px;height:70px;object-fit:cover;border-radius:10px}.grow{flex:1}.share{display:flex;gap:8px}.foot{background:#0b1220;color:#ddd;padding:30px 20px;margin-top:30px}.empty{text-align:center;padding:45px;background:#fff;border-radius:18px}.small{font-size:13px;color:#667085}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:550px){.grid{grid-template-columns:1fr}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.adminItem{align-items:flex-start;flex-direction:column}.share{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="logo">🛍️ BD <b>Bazar</b></div>
+<div class="search"><input id="search" placeholder="পণ্য খুঁজুন..." oninput="renderShop()"></div>
+<a class="btn" href="tel:01954959814">📞 কল</a>
+<button class="btn dark" onclick="openAdmin()">⚙️ Admin</button>
+</nav>
+
+<main class="wrap" id="shop">
+<section class="hero">
+<h1>BD Bazar</h1>
+<p>পণ্য দেখুন, পছন্দ করুন এবং সহজেই অর্ডার করুন।</p>
+</section>
+<div id="productArea"></div>
+</main>
+
+<section class="wrap admin" id="admin">
+<div class="box">
+<button class="btn red" style="float:right" onclick="closeAdmin()">লগআউট</button>
+<h2>⚙️ BD Bazar Admin</h2>
+<p class="small">এই ডিভাইসের ব্রাউজারে Product সংরক্ষিত থাকবে।</p>
+<div id="adminArea"></div>
+</div>
+</section>
+
+<footer class="foot">
+<b>🛍️ BD Bazar</b>
+<p>📞 01954959814</p>
+<p>🚚 ঢাকার ভিতরে ৳70 | ঢাকার বাইরে ৳130</p>
+<p>💰 ডেলিভারি চার্জ অগ্রিম। পণ্যের বাকি টাকা Cash on Delivery।</p>
+</footer>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalBox" class="box"></div></div>
+
+<script>
+/* ==============================
+   BD BAZAR — সম্পূর্ণ এক ফাইল
+   ============================== */
+
+const SHOP_PHONE="01954959814";
+const WHATSAPP="8801954959814";
+const BKASH="01954959814";
+const NAGAD="01954959814";
+const DEFAULT_ADMIN_PASSWORD="123456";
+function getAdminPassword(){return localStorage.getItem("bd_bazar_admin_password")||DEFAULT_ADMIN_PASSWORD;}
+function setAdminPassword(v){localStorage.setItem("bd_bazar_admin_password",v);}
+const DHAKA_DELIVERY=70;
+const OUTSIDE_DELIVERY=130;
+
+
+const DEFAULT_PRODUCTS=[
+{id:1,name:"Wireless Mini Gadget",price:650,category:"Gadget",description:"ছোট ও ব্যবহারযোগ্য দৈনন্দিন Gadget।",image:"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80"},
+{id:2,name:"Smart LED Gadget",price:850,category:"Gadget",description:"আকর্ষণীয় ডিজাইনের Smart LED Gadget।",image:"https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=1000&q=80"},
+{id:3,name:"Bluetooth Speaker",price:1250,category:"Audio",description:"Portable Bluetooth Speaker।",image:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=1000&q=80"},
+{id:4,name:"Smart Watch",price:1650,category:"Wearable",description:"স্টাইলিশ Smart Watch।",image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=80"},
+{id:5,name:"USB Rechargeable Fan",price:790,category:"Home Gadget",description:"USB Rechargeable Fan।",image:"https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=1000&q=80"},
+{id:6,name:"Fast Charging Cable",price:390,category:"Accessories",description:"Fast Charging Cable।",image:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=1000&q=80"},
+{id:7,name:"Mini Power Bank",price:990,category:"Power",description:"Portable Power Bank।",image:"https://images.unsplash.com/photo-1609592806596-b43c7e4d3a84?auto=format&fit=crop&w=1000&q=80"},
+{id:8,name:"Wireless Earbuds",price:1450,category:"Audio",description:"Wireless Earbuds with charging case।",image:"https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=1000&q=80"},
+{id:9,name:"LED Night Light",price:550,category:"Home",description:"সুন্দর LED Night Light।",image:"https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1000&q=80"},
+{id:10,name:"Phone Holder Stand",price:320,category:"Mobile",description:"Adjustable Phone Holder Stand।",image:"https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=1000&q=80"}
+];
+
+
+let products=loadProducts();
+let editingId=null;
+
+function loadProducts(){
+try{
+const x=localStorage.getItem("bd_bazar_products");
+return x?JSON.parse(x):DEFAULT_PRODUCTS;
+}catch(e){return DEFAULT_PRODUCTS}
+}
+function saveProducts(){localStorage.setItem("bd_bazar_products",JSON.stringify(products))}
+function money(n){return "৳"+Number(n).toLocaleString("bn-BD")}
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function getProduct(id){return products.find(p=>String(p.id)===String(id))}
+
+function productURL(id){
+const u=new URL(window.location.href);
+u.search="";
+u.searchParams.set("product",id);
+return u.href;
+}
+
+
+function changeAdminPassword(){
+const old=prompt("বর্তমান Admin Password লিখুন:");
+if(old===null)return;
+if(old!==getAdminPassword()){alert("বর্তমান Password ভুল।");return}
+const next=prompt("নতুন Admin Password লিখুন:");
+if(next===null)return;
+if(next.trim().length<4){alert("Password কমপক্ষে 4 অক্ষরের হতে হবে।");return}
+const confirmPassword=prompt("নতুন Password আবার লিখুন:");
+if(confirmPassword!==next){alert("দুইটি Password মিলেনি।");return}
+setAdminPassword(next.trim());
+alert("Admin Password সফলভাবে পরিবর্তন হয়েছে।");
+}
+
+function renderShop(){
+const q=(document.getElementById("search").value||"").toLowerCase().trim();
+const direct=new URLSearchParams(location.search).get("product");
+if(direct){
+const p=getProduct(direct);
+if(p){renderProductPage(p);return}
+}
+const list=products.filter(p=>(p.name+" "+p.category+" "+p.description).toLowerCase().includes(q));
+if(!list.length){productArea.innerHTML='<div class="empty"><h2>কোনো Product পাওয়া যায়নি</h2><p>অন্য নামে খুঁজুন।</p></div>';return}
+productArea.innerHTML='<h2>সব Product</h2><div class="grid">'+list.map(p=>`
+<article class="card">
+<img src="${esc(p.image)}" alt="${esc(p.name)}">
+<div class="body">
+<span class="tag">${esc(p.category||"Product")}</span>
+<h3>${esc(p.name)}</h3>
+<p class="desc">${esc(p.description||"")}</p>
+<div class="price">${money(p.price)}</div>
+<button class="btn blue full" onclick="openOrder(${p.id})">🛒 এখনই অর্ডার করুন</button>
+</div></article>`).join("")+'</div>';
+}
+
+function renderProductPage(p){
+document.title=p.name+" — BD Bazar";
+productArea.innerHTML=`
+<div class="box">
+<h1>${esc(p.name)}</h1>
+<img src="${esc(p.image)}" style="width:100%;max-height:500px;object-fit:contain;border-radius:15px">
+<span class="tag">${esc(p.category||"Product")}</span>
+<div class="price">${money(p.price)}</div>
+<p class="desc" style="font-size:16px">${esc(p.description||"")}</p>
+<div class="share">
+<button class="btn blue" onclick="openOrder(${p.id})">🛒 এখনই অর্ডার করুন</button>
+<button class="btn dark" onclick="shareProduct(${p.id})">📤 Product Share</button>
+<button class="btn gray" onclick="copyProductLink(${p.id})">🔗 Link Copy</button>
+</div>
+<br><a href="${location.pathname}" class="btn gray">← সব Product</a>
+</div>`;
+}
+
+async function copyProductLink(id){
+const url=productURL(id);
+try{await navigator.clipboard.writeText(url);alert("Product Link Copy হয়েছে।")}catch(e){prompt("এই Link Copy করুন:",url)}
+}
+async function shareProduct(id){
+const p=getProduct(id),url=productURL(id);
+if(navigator.share){
+try{await navigator.share({title:p.name,text:p.name+" — "+money(p.price),url})}catch(e){}
+}else{copyProductLink(id)}
+}
+
+function openOrder(id){
+const p=getProduct(id);if(!p)return;
+showModal(`
+<button class="close" onclick="closeModal()">✕</button>
+<h2>🛒 অর্ডার করুন</h2>
+<div class="summary"><div class="row"><span>Product</span><b>${esc(p.name)}</b></div><div class="row"><span>দাম</span><b>${money(p.price)}</b></div></div>
+<div class="field"><label>পরিমাণ *</label><input id="qty" type="number" min="1" value="1" oninput="calculate(${p.id})"></div>
+<div id="orderCalc"></div>
+<div class="field"><label>নাম *</label><input id="cname" placeholder="আপনার নাম"></div>
+<div class="field"><label>মোবাইল নাম্বার *</label><input id="cphone" placeholder="01XXXXXXXXX" inputmode="tel"></div>
+<div class="field"><label>গ্রামের নাম *</label><input id="cvillage" placeholder="গ্রামের নাম"></div>
+<div class="field"><label>উপজেলা *</label><input id="cupazila" placeholder="উপজেলার নাম"></div>
+<div class="field"><label>জেলা *</label><input id="cdistrict" placeholder="জেলার নাম"></div>
+<div class="field"><label>ডেলিভারি এলাকা *</label><select id="area" onchange="calculate(${p.id});showPayment()"><option value="">নির্বাচন করুন</option><option value="ঢাকার ভিতরে">ঢাকার ভিতরে — ৳70</option><option value="ঢাকার বাইরে">ঢাকার বাইরে — ৳130</option></select></div>
+<div class="field"><label>ডেলিভারি চার্জের পেমেন্ট মাধ্যম *</label><select id="method" onchange="showPayment()"><option value="">নির্বাচন করুন</option><option value="বিকাশ">📱 বিকাশ</option><option value="নগদ">📱 নগদ</option></select></div>
+<div id="paymentInfo"></div>
+<div class="notice">অর্ডার নিশ্চিত করার পর আপনার WhatsApp-এ অর্ডারের তথ্য পাঠানোর অপশন খুলবে। সেখানে <b>Send</b> চাপলেই অর্ডার দোকানে যাবে।</div>
+<br><button class="btn blue full" onclick="submitOrder(${p.id})">✅ অর্ডার নিশ্চিত করুন</button>
+`);
+calculate(p.id);
+}
+
+function calculate(id){
+const p=getProduct(id);
+const q=Math.max(1,Number(document.getElementById("qty")?.value||1));
+const a=document.getElementById("area")?.value||"";
+const d=a==="ঢাকার ভিতরে"?DHAKA_DELIVERY:a==="ঢাকার বাইরে"?OUTSIDE_DELIVERY:0;
+const subtotal=p.price*q;
+document.getElementById("orderCalc").innerHTML=`
+<div class="summary">
+<div class="row"><span>পণ্যের মোট</span><b>${money(subtotal)}</b></div>
+<div class="row"><span>ডেলিভারি চার্জ</span><b>${d?money(d):"এলাকা নির্বাচন করুন"}</b></div>
+<div class="row total"><span>মোট</span><b>${money(subtotal+d)}</b></div>
+</div>`;
+}
+
+function showPayment(){
+const method=document.getElementById("method")?.value||"";
+const area=document.getElementById("area")?.value||"";
+const d=area==="ঢাকার ভিতরে"?DHAKA_DELIVERY:area==="ঢাকার বাইরে"?OUTSIDE_DELIVERY:0;
+if(!method){paymentInfo.innerHTML="";return}
+if(!d){paymentInfo.innerHTML='<div class="payment">আগে ডেলিভারি এলাকা নির্বাচন করুন।</div>';return}
+paymentInfo.innerHTML=`<div class="payment"><b>${method}</b> নম্বর: <b>${method==="বিকাশ"?BKASH:NAGAD}</b><br><br>অগ্রিম দিতে হবে: <b>${money(d)}</b></div>`;
+}
+
+function submitOrder(id){
+const p=getProduct(id);
+const name=document.getElementById("cname").value.trim();
+const phone=document.getElementById("cphone").value.trim();
+const village=document.getElementById("cvillage").value.trim();
+const upazila=document.getElementById("cupazila").value.trim();
+const district=document.getElementById("cdistrict").value.trim();
+const area=document.getElementById("area").value;
+const method=document.getElementById("method").value;
+const q=Math.max(1,Number(document.getElementById("qty").value||1));
+
+if(!name||!phone||!village||!upazila||!district){alert("নাম, মোবাইল, গ্রাম, উপজেলা ও জেলা পূরণ করুন।");return}
+if(!area){alert("ডেলিভারি এলাকা নির্বাচন করুন।");return}
+if(!method){alert("পেমেন্ট মাধ্যম নির্বাচন করুন।");return}
+
+const delivery=area==="ঢাকার ভিতরে"?DHAKA_DELIVERY:OUTSIDE_DELIVERY;
+const subtotal=p.price*q;
+const total=subtotal+delivery;
+
+const message=`🛍️ BD Bazar — নতুন অর্ডার
+
+📦 Product: ${p.name}
+🔢 Quantity: ${q}
+💰 Product Total: ${money(subtotal)}
+
+👤 নাম: ${name}
+📱 মোবাইল: ${phone}
+🌳 গ্রাম: ${village}
+🏘️ উপজেলা: ${upazila}
+📍 জেলা: ${district}
+
+🚚 Delivery: ${area}
+💵 Delivery Charge Advance: ${money(delivery)}
+📱 Payment Method: ${method}
+💰 Product Balance: ${money(subtotal)}
+
+💳 মোট অর্ডার মূল্য: ${money(total)}
+➡️ পণ্যের বাকি টাকা Cash on Delivery।
+
+🔗 Product Link: ${productURL(p.id)}`;
+
+const wa="https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(message);
+showModal(`
+<div style="text-align:center;padding:15px">
+<div style="font-size:55px">✅</div>
+<h2>অর্ডার প্রস্তুত!</h2>
+<p>নিচের বাটনে চাপলে WhatsApp খুলবে। তারপর <b>Send</b> চাপলেই দোকানে অর্ডার চলে যাবে।</p>
+<a class="btn blue" style="display:block;text-decoration:none" href="${wa}" target="_blank">📲 WhatsApp-এ অর্ডার পাঠান</a>
+<br>
+<div class="notice">আপনার অর্ডারের তথ্য এই ডিভাইসে সংরক্ষণ করা হয়নি—WhatsApp-এ Send করলেই দোকান অর্ডারটি পাবে।</div>
+<br><button class="btn gray" onclick="closeModal()">বন্ধ করুন</button>
+</div>`);
+}
+
+function showModal(html){document.getElementById("modalBox").innerHTML=html;document.getElementById("modal").classList.add("on")}
+function closeModal(){document.getElementById("modal").classList.remove("on")}
+
+function openAdmin(){
+const p=prompt("Admin Password লিখুন:");
+if(p!==getAdminPassword()){if(p!==null)alert("Password ভুল।");return}
+document.getElementById("shop").style.display="none";
+document.getElementById("admin").classList.add("on");
+renderAdmin();
+}
+function closeAdmin(){document.getElementById("admin").classList.remove("on");document.getElementById("shop").style.display="block";renderShop()}
+
+function renderAdmin(){
+document.getElementById("adminArea").innerHTML=`
+<button class="btn blue" onclick="addForm()">➕ নতুন Product</button>
+<button class="btn gray" onclick="changeAdminPassword()">🔐 Admin Password পরিবর্তন</button>
+<h3>📦 Product List</h3>
+${products.map(p=>`
+<div class="adminItem">
+<img src="${esc(p.image)}">
+<div class="grow"><b>${esc(p.name)}</b><br>${money(p.price)}<br><span class="small">${esc(p.category)}</span></div>
+<button class="btn blue" onclick="editForm(${p.id})">✏️ Edit</button>
+<button class="btn red" onclick="removeProduct(${p.id})">🗑️ Delete</button>
+</div>`).join("")}`;
+}
+
+function addForm(){
+editingId=null;
+document.getElementById("adminArea").innerHTML=`
+<h3>➕ নতুন Product</h3>
+<div class="field"><label>Product Name *</label><input id="pName" placeholder="পণ্যের নাম"></div>
+<div class="field"><label>Price *</label><input id="pPrice" type="number" placeholder="650"></div>
+<div class="field"><label>Category</label><input id="pCategory" placeholder="Gadget"></div>
+<div class="field"><label>Product Description</label><textarea id="pDescription" placeholder="পণ্যের বিস্তারিত"></textarea></div>
+<div class="field"><label>Product Image Link *</label><input id="pImage" placeholder="https://..."></div>
+<button class="btn blue" onclick="saveProduct()">💾 Product Save</button>
+<button class="btn gray" onclick="renderAdmin()">বাতিল</button>`;
+}
+
+function editForm(id){
+const p=getProduct(id);editingId=id;
+document.getElementById("adminArea").innerHTML=`
+<h3>✏️ Product Edit</h3>
+<div class="field"><label>Product Name *</label><input id="pName" value="${esc(p.name)}"></div>
+<div class="field"><label>Price *</label><input id="pPrice" type="number" value="${p.price}"></div>
+<div class="field"><label>Category</label><input id="pCategory" value="${esc(p.category)}"></div>
+<div class="field"><label>Product Description</label><textarea id="pDescription">${esc(p.description)}</textarea></div>
+<div class="field"><label>Product Image Link *</label><input id="pImage" value="${esc(p.image)}"></div>
+<button class="btn blue" onclick="saveProduct()">💾 Update</button>
+<button class="btn gray" onclick="renderAdmin()">বাতিল</button>`;
+}
+
+function saveProduct(){
+const name=document.getElementById("pName").value.trim();
+const price=Number(document.getElementById("pPrice").value);
+const category=document.getElementById("pCategory").value.trim()||"Product";
+const description=document.getElementById("pDescription").value.trim();
+const image=document.getElementById("pImage").value.trim();
+if(!name||!price||!image){alert("Product Name, Price এবং Image Link দিন।");return}
+if(editingId){
+const p=getProduct(editingId);Object.assign(p,{name,price,category,description,image});
+}else{
+products.unshift({id:Date.now(),name,price,category,description,image});
+}
+saveProducts();editingId=null;alert("Product Save হয়েছে।");renderAdmin();renderShop();
+}
+
+function removeProduct(id){
+const p=getProduct(id);
+if(!confirm("“"+p.name+"” Delete করতে চান?"))return;
+products=products.filter(x=>x.id!==id);
+saveProducts();renderAdmin();renderShop();
+}
+
+renderShop();
+</script>
+</body>
+</html>
